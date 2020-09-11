@@ -25,8 +25,7 @@ public class Main {
 
     public static void test() {
         String expectedResult = "Glassdoor";
-        WebElement googleSearchField = driver.findElement(By.xpath("//*[@id=\"tsf\"]/div[2]" +
-                "/div[1]/div[1]/div/div[2]/input"));
+        WebElement googleSearchField = driver.findElement(By.name("q"));
         googleSearchField.sendKeys("glassdoor");
         googleSearchField.sendKeys(Keys.ENTER);
         WebElement glassdoorLogo = driver.findElement(By.xpath("//*[@id=\"wp-tabs-container\"]/div[1]/div[3]/div/div/div/div[2]/h2"));
