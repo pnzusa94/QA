@@ -1,0 +1,35 @@
+import org.junit.Assert;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+import java.util.concurrent.TimeUnit;
+
+public class Main {
+    public static WebDriver driver;
+
+    public static void setup() {
+        System.setProperty("webdriver.chrome.driver", "/Users/Admin/Desktop/chromedriver");
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        driver.get("https://gsuite.google.com/features/");
+    }
+
+    public static void test() {
+        String GMailIconVar = "//div[starts-with(@id,\"tooltip-gmail\")]"; // Relative XPath, 'starts-with' function
+        String popUpValue = "//h4[contains(@aria-describedby,\"tooltip-id-gmail\")]"; //Relative Xpath, 'contains' function
+        String expectedResult = "Gmail";
+        WebElement GMailIcon = driver.findElement(By.xpath(GMailIconVar));
+        GMailIcon.click();
+        WebElement popUp = driver.findElement(By.xpath(popUpValue));
+        Assert.assertEquals(expectedResult, popUp.getText());
+        System.out.println("ER: " + expectedResult + " AR: " + popUp.getText());
+    }
+
+    public static void main(String[] args) {
+        Main.setup();
+        Main.test();
+    }
+}
