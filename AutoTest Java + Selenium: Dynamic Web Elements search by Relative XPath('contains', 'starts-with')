@@ -21,11 +21,10 @@ public class Main {
         String GMailIconVar = "//div[starts-with(@id,\"tooltip-gmail\")]"; // Relative XPath, 'starts-with' function
         String popUpValue = "//h4[contains(@aria-describedby,\"tooltip-id-gmail\")]"; //Relative Xpath, 'contains' function
         String expectedResult = "Gmail";
-        WebElement GMailIcon = driver.findElement(By.xpath(GMailIconVar));
-        GMailIcon.click();
-        WebElement popUp = driver.findElement(By.xpath(popUpValue));
-        Assert.assertEquals(expectedResult, popUp.getText());
-        System.out.println("ER: " + expectedResult + " AR: " + popUp.getText());
+        driver.findElement(By.xpath(GMailIconVar)).click();
+        String actualResult = driver.findElement(By.xpath(popUpValue)).getText();
+        Assert.assertEquals(expectedResult, actualResult);
+        System.out.println("ER: " + expectedResult + " AR: " + actualResult);
     }
 
     public static void main(String[] args) {
@@ -33,3 +32,5 @@ public class Main {
         Main.test();
     }
 }
+
+//Console Output: ER: Gmail AR: Gmail
