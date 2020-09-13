@@ -1,29 +1,38 @@
 // Basic AutoTest that extracts text from the WebElement and compares it with expected.
-// Java 11 + selenium v.3.141.59 + jUnit v.4.12
+// Java 11 + selenium v.3.141.59 + TestNG v.6.8
 
-package autoTest;
-
-import org.junit.Assert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.Keys;
-
+import org.testng.Assert;
+import org.testng.annotations.*;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
-    public static WebDriver driver;
+    public WebDriver driver;
 
-    public static void setup() {
+    @BeforeClass
+    public void webDriverSetUp() {
         System.setProperty("webdriver.chrome.driver", "/Users/Admin/Desktop/chromedriver");
+    }
+
+    @AfterClass
+    public void clearBrowserProperty() {
+        System.clearProperty("webdriver.chrome.driver");
+    }
+
+    @BeforeMethod
+    public void setup() {
         driver = new ChromeDriver();
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         driver.get("https://www.google.com/");
     }
 
-    public static void test() {
+    @Test
+    public void test() {
         String expectedResult = "Glassdoor";
         WebElement googleSearchField = driver.findElement(By.name("q"));
         googleSearchField.sendKeys("glassdoor");
@@ -31,14 +40,10 @@ public class Main {
         WebElement glassdoorLogo = driver.findElement(By.xpath("//*[@id=\"wp-tabs-container\"]/div[1]/div[3]/div/div/div/div[2]/h2"));
         String actualResult = glassdoorLogo.getText();
         Assert.assertEquals(expectedResult, actualResult);
-        System.out.println("ER: " + expectedResult + " AR: " + actualResult);
     }
 
-    public static void main(String[] args) {
-        Main.setup();
-        Main.test();
+    @AfterMethod
+    public void tearDown() {
+        driver.quit();
     }
 }
-
-
-// Console output: ER: Glassdoor AR: Glassdoor
