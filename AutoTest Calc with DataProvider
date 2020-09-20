@@ -12,14 +12,6 @@ import java.util.concurrent.TimeUnit;
 public class CalcTest {
     public WebDriver driver;
 
-    @DataProvider(name = "positiveScenario")
-    static Object[][] positiveTest() {
-        return new Object[][]{
-                {"3+5", "8"},
-                {"4*8", "32"}
-        };
-    }
-
     @BeforeClass
     public void webDriverSetUp() {
         System.setProperty("webdriver.chrome.driver", "/Users/Admin/Desktop/chromedriver");
@@ -38,7 +30,7 @@ public class CalcTest {
         driver.get("https://www.google.com/");
     }
 
-    @Test(dataProvider = "positiveScenario")
+    @Test(dataProvider = "positiveScenario", dataProviderClass = TestData.class)
     public void test(String input, String expected) {
         WebElement googleSearchField = driver.findElement(By.name("q"));
         googleSearchField.sendKeys(input);
@@ -47,8 +39,38 @@ public class CalcTest {
         Assert.assertEquals(expected, result.getText());
     }
 
+    @Test(dataProvider="negativeScenario", dataProviderClass = TestData.class)
+    public void negativeTest(String input, String expected) {
+        WebElement googleSearchField = driver.findElement(By.name("q"));
+        googleSearchField.sendKeys(input);
+        googleSearchField.sendKeys(Keys.ENTER);
+        WebElement result = driver.findElement(By.cssSelector("span[id=\"cwos\"]"));
+        Assert.assertNotEquals(expected, result.getText());
+    }
+
     @AfterMethod
     public void tearDown() {
         driver.quit();
+    }
+}
+
+
+import org.testng.annotations.DataProvider;
+
+public class TestData {
+    @DataProvider(name = "positiveScenario")
+    static Object[][] positiveTest() {
+        return new Object[][]{
+                {"3+5", "8"},
+                {"4*8", "32"}
+        };
+    }
+
+    @DataProvider(name = "negativeScenario")
+    static Object[][] negativeTest() {
+        return new Object[][]{
+                {"3-1", "5"},
+                {"-4-10", "1"}
+        };
     }
 }
