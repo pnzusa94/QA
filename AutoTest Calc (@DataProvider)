@@ -1,0 +1,54 @@
+// Selenium 3.141.59 + TestNG 6.8 + maven.compiler.source 1.11
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.Assert;
+import org.testng.annotations.*;
+
+import java.util.concurrent.TimeUnit;
+
+public class CalcTest {
+    public WebDriver driver;
+
+    @DataProvider(name = "positiveScenario")
+    static Object[][] positiveTest() {
+        return new Object[][]{
+                {"3+5", "8"},
+                {"4*8", "32"}
+        };
+    }
+
+    @BeforeClass
+    public void webDriverSetUp() {
+        System.setProperty("webdriver.chrome.driver", "/Users/Admin/Desktop/chromedriver");
+    }
+
+    @AfterClass
+    public void clearBrowserProperty() {
+        System.clearProperty("webdriver.chrome.driver");
+    }
+
+    @BeforeMethod
+    public void setup() {
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        driver.get("https://www.google.com/");
+    }
+
+    @Test(dataProvider = "positiveScenario")
+    public void test(String input, String expected) {
+        WebElement googleSearchField = driver.findElement(By.name("q"));
+        googleSearchField.sendKeys(input);
+        googleSearchField.sendKeys(Keys.ENTER);
+        WebElement result = driver.findElement(By.cssSelector("span[id=\"cwos\"]"));
+        Assert.assertEquals(expected, result.getText());
+    }
+
+    @AfterMethod
+    public void tearDown() {
+        driver.quit();
+    }
+}
