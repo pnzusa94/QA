@@ -1,0 +1,45 @@
+import org.openqa.selenium.WebDriver;
+import org.testng.annotations.AfterSuite;
+import org.testng.annotations.BeforeSuite;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+public class BaseTest {
+    private static List<WebDriver> driverPool = new ArrayList<WebDriver>();
+
+    @BeforeSuite
+    public void setUpSuite() {
+        System.setProperty("webdriver.chrome.driver", "/Users/Admin/Desktop/chromedriver");
+        System.setProperty("webdriver.gecko.driver", "/Users/Admin/Desktop/geckodriver");
+        }
+        
+    WebDriver getDriver(BrowserType type, String baseURL){
+        WebDriver driver = DriverFactory.getInstance().getDriver(type);
+        driverPool.add(driver);
+        driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        driver.get(baseURL);
+        return driver;
+    }
+    
+    WebDriver getDriver() { 
+        return getDriver(BrowserType.CHROME, "https://www.google.com/"); // default Browser and URL (Method Overriding)
+    } 
+
+    @AfterSuite
+    public void tearDownSuite() {
+        for (WebDriver currentDriver : driverPool) {
+            currentDriver.quit();
+        }
+    }
+}
+
+public class Test extends BaseTest {
+
+    @Test
+    public void test() {
+    WebDriver driver = getDriver(); // WebDriver driver = getDriver(BrowserType.FIREFOX, "https://www.google.com/");
+    }
+}
