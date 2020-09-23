@@ -1,4 +1,4 @@
-//Project location: https://github.com/pnzusa94/SeleniumFramework
+//Project's location: https://github.com/pnzusa94/SeleniumFramework
 
 1) driver.properties
 webdriver.chrome.driver.win=C:\\Users\\User\\chromedriver.exe
