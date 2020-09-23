@@ -1,1 +1,150 @@
-https://github.com/pnzusa94/SeleniumFramework
+//Project location: https://github.com/pnzusa94/SeleniumFramework
+
+1) driver.properties
+webdriver.chrome.driver.win=C:\\Users\\User\\chromedriver.exe
+webdriver.gecko.driver.win=C:\\Users\\User\\geckodriver.exe
+
+webdriver.chrome.driver.mac=/Users/Admin/Desktop/chromedriver
+webdriver.gecko.driver.mac=/Users/Admin/Desktop/geckodriver
+
+2)env-qa.properties
+baseURL=http://www.google.com
+defaultBrowser=chrome
+implicitWaitTimeout=30
+
+3)DriverUtils.java
+package util;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.remote.CapabilityType;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.Properties;
+
+public class DriverUtils {
+    private static Properties properties;
+    private static final String DRIVER_PROP_FILE = "src/main/resources/driver.properties";
+
+    public static WebDriver getDriver(WebDriver driver, String browser, String baseURL) throws Exception, FileNotFoundException {
+        properties = new Properties();
+        properties.load(new FileInputStream(DRIVER_PROP_FILE));
+        if (isWindows()) {
+            if (browser.equalsIgnoreCase("firefox")) {
+                FirefoxOptions options = new FirefoxOptions();
+                options.setCapability(CapabilityType.BROWSER_VERSION, 48);
+
+                System.setProperty("webdriver.gecko.driver", properties.getProperty(Constants.FIREFOX_DRIVER_WIN));
+                driver = new FirefoxDriver();
+            }
+            if (browser.equalsIgnoreCase("chrome")) {
+                System.setProperty("webdriver.chrome.driver", properties.getProperty(Constants.CHROME_DRIVER_WIN));
+                driver = new ChromeDriver();
+            }
+        } else if (isMac()) {
+            if (browser.equalsIgnoreCase("firefox")) {
+                FirefoxOptions options = new FirefoxOptions();
+                options.setCapability(CapabilityType.BROWSER_VERSION, 48);
+
+                System.setProperty("webdriver.gecko.driver", properties.getProperty(Constants.FIREFOX_DRIVER_MAC));
+                driver = new FirefoxDriver();
+            }
+            if (browser.equalsIgnoreCase("chrome")) {
+                System.setProperty("webdriver.chrome.driver", properties.getProperty(Constants.CHROME_DRIVER_MAC));
+                driver = new ChromeDriver();
+            }
+        }
+        driver.get(baseURL);
+        driver.manage().window().maximize();
+        return driver;
+    }
+
+    private static boolean isWindows() {
+        String os = System.getProperty("os.name");
+        return os.startsWith("Windows");
+    }
+
+    private static boolean isMac() {
+        String os = System.getProperty("os.name");
+        return os.startsWith("Mac");
+    }
+}
+
+
+4)BaseClass.java
+
+package pages;
+import org.openqa.selenium.WebDriver;
+import util.DriverUtils;
+import java.io.FileInputStream;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+
+public abstract class BaseClass {
+    protected WebDriver driver;
+    private Properties properties = getProperties();
+
+    public BaseClass() {
+        try {
+            String baseURL = properties.getProperty("baseURL");
+            String browser = properties.getProperty("defaultBrowser");
+            driver = DriverUtils.getDriver(driver, browser, baseURL);
+
+            int implicitWaitTimeout = Integer.parseInt(properties.getProperty("implicitWaitTimeout"));
+            driver.manage().timeouts().implicitlyWait(implicitWaitTimeout, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Properties getProperties() {
+        properties = new Properties();
+        try {
+            properties.load(new FileInputStream("src/main/resources/env-qa.properties"));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return properties;
+    }
+}
+
+
+5)GoogleSearchPage.java
+package pages;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.testng.Assert;
+
+public class GoogleSearchPage extends BaseClass {
+    public GoogleSearchPage() {
+        super();
+    }
+
+    public void search(String search, String expected) {
+        WebElement element = driver.findElement(By.name("q"));
+        element.sendKeys(search);
+        element.submit();
+        WebElement newElement = driver.findElement(By.cssSelector("h2[class=\"qrShPb kno-ecr-pt PZPZlf mfMhoc\"]>span"));
+        String actual = newElement.getText();
+        Assert.assertEquals(actual, expected );
+    }
+}
+
+6)GoogleSearchPageTest.java
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
+import pages.GoogleSearchPage;
+
+public class GoogleSearchPageTest {
+    GoogleSearchPage googleSearchPage = new GoogleSearchPage();
+
+    @Test
+    public void search() {
+        googleSearchPage.search("Selenium","Selenium");
+    }
+}
