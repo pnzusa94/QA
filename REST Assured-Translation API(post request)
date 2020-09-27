@@ -1,0 +1,40 @@
+1)dataAPI.json
+{
+  "q": "Hello World",
+  "target": "ru"
+}
+
+
+2)TranslateAPITest.java
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.testng.annotations.Test;
+import static org.hamcrest.Matchers.equalTo;
+
+import java.io.FileReader;
+
+import static io.restassured.RestAssured.given;
+
+public class TranslateAPITest {
+    static final String JSON_FILE = "src/main/resources/dataAPI.json";
+
+    @Test
+    public void translate() throws Exception {
+        JSONParser parser = new JSONParser();
+        Object obj = parser.parse(new FileReader(JSON_FILE));
+
+        JSONObject jsonObject = (JSONObject) obj;
+
+        given().
+            header("x-rapidapi-host", "deep-translate1.p.rapidapi.com").and().
+            header("x-rapidapi-key", "4db65fd4d1mshd2d5a3d8c332cc2p18cc38jsn8f31fe6b1f39").and().
+            body(jsonObject.toJSONString()).
+        when().
+            post("https://deep-translate1.p.rapidapi.com/language/translate/v2").
+        then().
+            statusCode(200).
+            body("data.translations.translatedText", equalTo("Привет мир")).
+            log().all();
+    }
+}
