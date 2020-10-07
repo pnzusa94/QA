@@ -1,0 +1,46 @@
+1) login.feature
+
+Feature: Testing login functionality
+
+  Scenario: Check login is successful with valid credentials
+
+    Given user is on login page
+    When user inputs login and password
+    And press login button
+    Then user is navigated to the home page
+    
+2) LoginSteps.java
+import io.cucumber.java.en.*;
+public class LoginSteps {
+
+    @Given("user is on login page")
+    public void user_is_on_login_page() {
+        throw new io.cucumber.java.PendingException();
+    }
+
+    @When("user inputs login and password")
+    public void user_inputs_login_and_password () {
+        throw new io.cucumber.java.PendingException();
+    }
+    
+    @And("press login button")
+    public void press_login_button() {
+        throw new io.cucumber.java.PendingException();
+    }
+
+    @Then("user is navigated to the home page")
+    public void user_is_navigated_to_the_home_page() {
+        throw new io.cucumber.java.PendingException();
+    }
+}
+
+3) TestRunner.java
+
+import io.cucumber.junit.Cucumber;
+import io.cucumber.junit.CucumberOptions;
+import org.junit.runner.RunWith;
+
+@RunWith(Cucumber.class)
+@CucumberOptions(features = "src/test/Resources/Features", glue = {"stepDefinitions"})
+public class TestRunner {
+}
