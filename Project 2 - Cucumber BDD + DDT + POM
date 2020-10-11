@@ -1,0 +1,111 @@
+1)login.feature
+Feature: Testing login functionality
+
+  Scenario Outline: Check login is successful with valid credentials
+
+    Given browser is opened
+    And user is on login page
+    When user enters <username> and <password>
+    And press login button
+    Then user is navigated to the home page
+
+    Examples:
+      | username | password |
+      | Mike | 12345 |
+      | John | 12345 |
+
+2)LoginPage.java
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+
+public class LoginPage {
+    protected WebDriver driver;
+    
+    public LoginPage(WebDriver driver) {
+        this.driver = driver;
+    }
+
+    private By txt_username = By.id("name");
+    private By txt_password = By.id("password");
+    private By btn_login = By.id("login");
+    private By btn_logout = By.id("logout");
+
+    public void enterUsername(String username) {
+        driver.findElement(txt_username).sendKeys(username);
+    }
+
+    public void enterPassword(String password) {
+        driver.findElement(txt_password).sendKeys(password);
+    }
+
+    public void clickLogin() {
+        driver.findElement(btn_login).click();
+    }
+
+    public void checkLogoutIsDisplayed() {
+        driver.findElement(btn_logout).isDisplayed();
+    }
+
+    public void loginValidUser(String username, String password) {
+        driver.findElement(txt_username).sendKeys(username);
+        driver.findElement(txt_password).sendKeys(password);
+        driver.findElement(btn_login).click();
+    }
+}
+
+3)LoginSteps.java
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import pages.LoginPage;
+
+import java.util.concurrent.TimeUnit;
+
+public class LoginSteps_POM {
+    WebDriver driver = null;
+    LoginPage loginPage;
+
+    @Given("browser is opened")
+    public void browser_is_opened() {
+        System.setProperty("webdriver.chrome.driver", "/Users/Admin/Desktop/chromedriver");
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+    }
+
+    @And("user is on login page")
+    public void user_is_on_login_page() {
+        driver.navigate().to("https://example.testproject.io/web/");
+    }
+
+    @When("^user enters (.*) and (.*)$")
+    public void user_enters_login_and_password (String username, String password ) {
+        loginPage = new LoginPage(driver);
+        loginPage.enterUsername(username);
+        loginPage.enterPassword(password);
+    }
+    
+    @And("press login button")
+    public void press_login_button() {
+        loginPage.clickLogin();
+    }
+
+    @Then("user is navigated to the home page")
+    public void user_is_navigated_to_the_home_page() {
+        loginPage.checkLogoutIsDisplayed();
+    }
+}
+
+3)TestRunner.java
+
+import io.cucumber.junit.Cucumber;
+import io.cucumber.junit.CucumberOptions;
+import org.junit.runner.RunWith;
+
+@RunWith(Cucumber.class)
+@CucumberOptions(features = "src/test/Resources/Features", glue = {"stepDefinitions"})
+public class TestRunner {
+}
