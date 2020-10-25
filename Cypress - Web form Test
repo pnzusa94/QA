@@ -14,4 +14,21 @@ describe('Testing suite', function() {
 
         cy.get('input[type=checkbox]').check(['Cricket', 'Hockey']).should('be.checked')
     })
- })  
+
+    it('skills - dropdown box testing', function() {
+        cy.get('#Skills').select('Android').should('have.value', 'Android')
+    })
+
+    it('languages - multy select dropdown box testing', function() {
+        cy.get('#msdd').click()
+        cy.get('.ui-corner-all').contains('English').click()
+        cy.get('.ui-corner-all').contains('Russian').click()
+    })
+
+    it('Country - searchable dropdown box testing', function() {
+        cy.get('[role=combobox]').click({ force: true })
+        cy.get('.select2-search__field').type('Amer')
+        cy.get('.select2-search__field').type('{enter}')
+        cy.get('#select2-country-container').contains('United States of America')
+    })
+})
