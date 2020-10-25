@@ -1,9 +1,12 @@
-1) Test.js
 /// <reference types = "cypress"/>
 
 describe('Testing suite', function() {
-    it('checkbox testing', function() {
+
+    before(function() {
         cy.visit("http://demo.automationtesting.in/Register.html")
+    })
+
+    it('checkbox testing', function() {
         cy.get('#checkbox1').check().should('be.checked').and('have.value', 'Cricket')
         cy.get('#checkbox2').check().should('be.checked').and('have.value', 'Movies')
         cy.get('#checkbox3').check().should('be.checked').and('have.value', 'Hockey')
