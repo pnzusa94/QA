@@ -1,0 +1,26 @@
+1)loginData.json
+{
+    "email": "email",
+    "password": "password",
+    "error": "Enter a valid email"
+}
+
+2)test.js
+/// <reference types = "cypress"/>
+
+describe('MyFirstTestSuite', function() {
+
+    before(function() {
+        cy.visit('https://codility-frontend-prod.s3.amazonaws.com/media/task_static/qa_login_page/9a83bda125cd7398f9f482a3d6d45ea4/static/attachments/reference_page.html')
+        cy.fixture('loginData').then(function(data) {
+            this.data = data
+        })
+    })
+
+    it('Verify Title Of The Page Positive', function() {
+        cy.get('#email-input').type(this.data.email)
+        cy.get('#password-input').type(this.data.password)
+        cy.get('#login-button').click()
+        cy.get('.validation').contains(this.data.error).should('be.visible')
+    })
+})
